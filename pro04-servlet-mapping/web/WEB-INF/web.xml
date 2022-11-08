@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <servlet>
+        <servlet-name>ServletMapping</servlet-name>
+        <servlet-class>com.kaede.servlets.ServletMapping</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServletMapping</servlet-name>
+        <url-pattern>/map</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- <servlet>
+        <servlet-name>ServletMapping1</servlet-name>
+        <servlet-class>com.kaede.servlets.ServletMapping1</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServletMapping1</servlet-name>
+        <url-pattern>/map1</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletMapping1</servlet-name>
+        <url-pattern>/map2</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletMapping1</servlet-name>
+        <url-pattern>/map3</url-pattern>
+    </servlet-mapping> -->
+
+    <servlet>
+        <servlet-name>ServletMapping1</servlet-name>
+        <servlet-class>com.kaede.servlets.ServletMapping1</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ServletMapping1</servlet-name>
+        <url-pattern>/map1</url-pattern>
+        <url-pattern>/map2</url-pattern>
+        <url-pattern>/map3</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>MyServlet1</servlet-name>
+        <servlet-class>com.kaede.servlets.MyServlet1</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MyServlet2</servlet-name>
+        <servlet-class>com.kaede.servlets.MyServlet2</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MyServlet3</servlet-name>
+        <servlet-class>com.kaede.servlets.MyServlet3</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MyServlet4</servlet-name>
+        <servlet-class>com.kaede.servlets.MyServlet4</servlet-class>
+    </servlet>
+    <!-- <servlet>
+        <servlet-name>MyServlet5</servlet-name>
+        <servlet-class>com.kaede.servlets.MyServlet5</servlet-class>
+    </servlet> -->
+
+    <!-- 完全路径匹配 -->
+    <servlet-mapping>
+        <servlet-name>MyServlet1</servlet-name>
+        <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+    <!-- 目录匹配 -->
+    <servlet-mapping>
+        <servlet-name>MyServlet2</servlet-name>
+        <url-pattern>/abc/my/*</url-pattern>
+    </servlet-mapping>
+    <!-- 目录匹配 -->
+    <servlet-mapping>
+        <servlet-name>MyServlet3</servlet-name>
+        <url-pattern>/abc/*</url-pattern>
+    </servlet-mapping>
+    <!-- 扩展名匹配 -->
+    <servlet-mapping>
+        <servlet-name>MyServlet4</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    <!--缺省匹配 -->
+    <!-- <servlet-mapping>
+        <servlet-name>MyServlet5</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping> -->
+
+</web-app>

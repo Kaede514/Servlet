@@ -1,0 +1,151 @@
+package com.kaede.myssm.basedao;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class BaseDAO<T> {
+
+    private Class<T> clazz = null;
+
+    {
+        //初始化子类时会向上初始化父类，这时的this是子类的对象
+        //获取BaseDAOOptimize的子类继承的父类带泛型的Class对象
+        Type genericSuperClass = this.getClass().getGenericSuperclass();
+        ParameterizedType paramType = (ParameterizedType) genericSuperClass;
+        //获取泛型参数
+        Type[] types = paramType.getActualTypeArguments();
+        //泛型的第一个参数
+        clazz = (Class<T>) types[0];
+    }
+
+    //通用的增删改操作
+    public int update(String sql, Object ...args) {
+        Connection conn = JDBCUtils.getConnection();
+        PreparedStatement ps = null;
+        try {
+            //1、预编译sql语句，返回PreparedStatement的实例
+            ps = conn.prepareStatement(sql);
+            //2、填充占位符
+            for(int i=0; i< args.length; i++) {
+                ps.setObject(i+1, args[i]);
+            }
+            //3、执行
+            return ps.executeUpdate();
+        } catch(Exception e) {
+            throw new DAOException("DAO Exception in BaseDAO.update...");
+        } finally {
+            //4、资源的关闭
+            JDBCUtils.closeResource(ps);
+        }
+    }
+
+    //针对于不同的表的通用的查询操作，返回表中的一条记录
+    public T getInstance(String sql, Object ...args){
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            Connection conn = JDBCUtils.getConnection();
+            ps = conn.prepareStatement(sql);
+            //填充占位符
+            for(int i=0; i<args.length; i++) {
+                ps.setObject(i + 1, args[i]);
+            }
+            rs = ps.executeQuery();
+            //获取结果的元数据，元数据：描述数据的数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //通过ResultSetMetaData获取结果集中的列数
+            int columnCount = rsmd.getColumnCount();
+            if(rs.next()) {
+                T t = clazz.newInstance();
+                //处理结果集一行数据中的每个列
+                for(int i=0; i<columnCount; i++) {
+                    //获取列值
+                    Object columnValue = rs.getObject(i + 1);
+                    //获取每个列的列名
+                    String columnName = rsmd.getColumnLabel(i + 1);
+                    //给Customer对象指定的columnName属性赋值为columnValue，通过反射
+                    Field field = clazz.getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(t, columnValue);
+                }
+                return t;
+            }
+        } catch(Exception e) {
+            throw new DAOException("DAO Exception in BaseDAO.getInstance...");
+        } finally{
+            JDBCUtils.closeResource(ps, rs);
+        }
+        return null;
+    }
+
+    //针对于不同的表的通用的查询操作，返回表中多条记录构成的集合
+    public List<T> getForList(String sql, Object ...args) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            Connection conn = JDBCUtils.getConnection();
+            ps = conn.prepareStatement(sql);
+            //填充占位符
+            for(int i=0; i<args.length; i++) {
+                ps.setObject(i + 1, args[i]);
+            }
+            rs = ps.executeQuery();
+            //获取结果的元数据，元数据：描述数据的数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //通过ResultSetMetaData获取结果集中的列数  
+            int columnCount = rsmd.getColumnCount();
+            //常见集合对象
+            ArrayList<T> list = new ArrayList<>();
+            while(rs.next()) {
+                T t = clazz.newInstance();
+                //处理结果集一行数据中的每个列：给T对象指定的属性赋值
+                for(int i=0; i<columnCount; i++) {
+                    //获取列值
+                    Object columnValue = rs.getObject(i + 1);
+                    //获取每个列的列名
+                    String columnName = rsmd.getColumnLabel(i + 1);
+                    //给Customer对象指定的columnName属性赋值为columnValue，通过反射
+                    Field field = clazz.getDeclaredField(columnName);
+                    field.setAccessible(true);
+                    field.set(t, columnValue);
+                }
+                list.add(t);
+            }
+            return list;
+        } catch(Exception e) {
+            throw new DAOException("DAO Exception in BaseDAO.getForList...");
+        } finally{
+            JDBCUtils.closeResource(ps, rs);
+        }
+    }
+
+    //针对于聚合函数等特殊行为的查询(考虑到事务)
+    public <E> E getValue(String sql, Object ...args) {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            Connection conn = JDBCUtils.getConnection();
+            ps = conn.prepareStatement(sql);
+            for(int i=0; i<args.length; i++) {
+                ps.setObject(i + 1, args[i]);
+            }
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                return (E) rs.getObject(1);
+            }
+        } catch(Exception e) {
+            throw new DAOException("DAO Exception in BaseDAO.getValue...");
+        } finally {
+            JDBCUtils.closeResource(ps, rs);
+        }
+        return null;
+    }
+
+}

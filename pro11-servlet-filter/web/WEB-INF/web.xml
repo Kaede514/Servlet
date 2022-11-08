@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!-- <filter>
+        <filter-name>MyFilter</filter-name>
+        <filter-class>com.kaede.filter.MyFilter</filter-class>
+        <init-param>
+            <param-name>name</param-name>
+            <param-value>kaede</param-value>
+        </init-param>
+        <init-param>
+            <param-name>hobby</param-name>
+            <param-value>anime</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>MyFilter</filter-name>
+        <url-pattern>/login</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>MyFilter</filter-name>
+        <servlet-name>com.kaede.servlet.LoginServlet</servlet-name>
+    </filter-mapping> -->
+
+    <!--过滤器链中FirstChainFilter配置 -->
+    <filter>
+        <filter-name>FirstChainFilter</filter-name>
+        <filter-class>com.kaede.filter.FirstChainFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>FirstChainFilter</filter-name>
+        <url-pattern>/index</url-pattern>
+    </filter-mapping>
+
+    <!--过滤器链中SecondChainFilter配置 -->
+    <filter>
+        <filter-name>SecondChainFilter</filter-name>
+        <filter-class>com.kaede.filter.SecondChainFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SecondChainFilter</filter-name>
+        <url-pattern>/index</url-pattern>
+    </filter-mapping>
+
+</web-app>
